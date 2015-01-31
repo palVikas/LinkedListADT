@@ -24,7 +24,6 @@ int add_to_list(LinkedList *LinkedList_ptr,Node *node) {
 	}
 	else
 		(*(*LinkedList_ptr).tail).next = node;
-
 	(*LinkedList_ptr).tail = node;
 	(*LinkedList_ptr).count++;
 
@@ -106,4 +105,28 @@ void * deleteElementAt(LinkedList * list_ptr, int index){
 	list_ptr->count--;
 	return temp2->data;
 	
+};
+
+int asArray(LinkedList list, void **array){
+	int count = 0;
+	while(list.head != NULL){
+		array[count] = list.head->data;
+		count++;
+		list.head = list.head->next;
+	}
+	return count;
+}
+
+LinkedList * filter(LinkedList list, filterFunc* filterr){
+	LinkedList* list_ptr = calloc(1,sizeof(LinkedList));
+
+	while(list.head != NULL){
+
+		if(filterr(list.head->data)==1) {
+			add_to_list(list_ptr,list.head);
+		}
+
+		list.head = list.head->next; 
+	}
+	return list_ptr;
 };

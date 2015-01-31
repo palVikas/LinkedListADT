@@ -2,6 +2,7 @@ typedef struct Node * node_ptr;
 typedef struct linkedList LinkedList;
 typedef struct Node Node;
 typedef void (traverseFunc)(void *data);
+typedef int (filterFunc)(void *data);
 
 struct Node {
 	void* data;	
@@ -33,3 +34,5 @@ int indexOf(LinkedList, void *);
 void * deleteElementAt(LinkedList *, int);
 
 int asArray(LinkedList, void **);
+
+LinkedList * filter(LinkedList, filterFunc* filterr);

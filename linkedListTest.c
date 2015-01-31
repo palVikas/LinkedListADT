@@ -3,8 +3,10 @@
 #include "stdlib.h"
 #include "expr_assert.h"
 
+LinkedList list;
+Node* result;
+
 void test_for_createList_create_an_empty_list_and_gives_head_and_tail_is_null(){
-	LinkedList list;
 	list = createList();
 	assertEqual(sizeof(list),12);
 	assert(list.head==NULL);
@@ -14,7 +16,6 @@ void test_for_createList_create_an_empty_list_and_gives_head_and_tail_is_null(){
 
 void test_create_node_to_create_for_int_data_and_gives_next_to_null(){
 	int x =4;
-	Node* result; 
 	result = create_node(&x);
 	assertEqual(*(int*)result->data,4);
 	assert(result->next== NULL);
@@ -23,7 +24,6 @@ void test_create_node_to_create_for_int_data_and_gives_next_to_null(){
 
 void test_create_node_create_for_char_data_and_gives_next_to_null(){
 	char ch = 'c';
-	Node* result; 
 	result = create_node(&ch);
 	assertEqual(*(char*)result->data ,'c');
 	assert(result->next == NULL);
@@ -31,7 +31,6 @@ void test_create_node_create_for_char_data_and_gives_next_to_null(){
 }
 void test_create_node_create_for_string_data_and_gives_next_to_null(){
 	char* str = "vikas";
-	Node* result; 
 	result = create_node(&str);
 	assert(*(char**)result->data == "vikas");
 	assert(result->next == NULL);
@@ -41,7 +40,6 @@ void test_create_node_create_for_string_data_and_gives_next_to_null(){
 
 void test_create_node_create_for_float_data_and_gives_next_to_null(){
 	float f = 3.14;
-	Node* result; 
 	result = create_node(&f);
 	assert(*(float*)result->data==(float)3.14);
 	assert(result->next == NULL);
@@ -49,7 +47,6 @@ void test_create_node_create_for_float_data_and_gives_next_to_null(){
 }
 void test_for_add_to_list_add_node_in_the_null_linked_list(){
 	int x=5;
-	LinkedList list = createList();
 	Node* node = create_node(&x);
 	assertEqual(add_to_list(&list, node),1);
 	assert(list.head==node);
@@ -60,7 +57,7 @@ void test_for_add_to_list_add_two_node_first_as_head_and_second_as_tail_in_linke
 	int x=5,y=17;
 	Node* node1 = create_node(&x);
 	Node* node2 = create_node(&y);
-	LinkedList list = createList();
+	 list = createList();
 	add_to_list(&list, node1);
 	assert(list.head==node1);
 	assertEqual(*(int*)node1->data,5);
@@ -73,9 +70,8 @@ void test_for_add_to_list_add_two_node_first_as_head_and_second_as_tail_in_linke
 
 void test_for_get_first_element_in_the_linkedList(){
 	int x=5;
-	Node* result;
 	Node* node1 = create_node(&x);
-	LinkedList list = createList();
+	 list = createList();
 	add_to_list(&list, node1);
 	result = get_first_element(list);
 	assertEqual(*(int*)result->data, 5);
@@ -84,10 +80,9 @@ void test_for_get_first_element_in_the_linkedList(){
 
 void test_for_get_first_element_if_two_elements_are_added(){
 	int x=5,y=6;
-	Node* result;
 	Node* node1 = create_node(&x);
 	Node* node2 = create_node(&y);
-	LinkedList list = createList();
+	 list = createList();
 	add_to_list(&list, node1);
 	add_to_list(&list, node2);
 	result = get_first_element(list);
@@ -97,7 +92,6 @@ void test_for_get_first_element_if_two_elements_are_added(){
 
 void test_for_get_last_element_in_the_linkedList(){
 	int x=5;
-	Node* result;
 	Node* node1 = create_node(&x);
 	LinkedList list = createList();
 	add_to_list(&list, node1);
@@ -108,7 +102,6 @@ void test_for_get_last_element_in_the_linkedList(){
 
 void test_for_get_last_element_if_two_elements_are_added(){
 	int x=5,y=6;
-	Node* result;
 	Node* node1 = create_node(&x);
 	Node* node2 = create_node(&y);
 	LinkedList list = createList();
@@ -333,4 +326,128 @@ void test_deleteElementAt_returns_NULL_when_index_is_not_found_in_list(){
 
 	assert((double*)deleteElementAt(&list, -3) == NULL);
 	free(node1); free(node2);
+};
+
+void test_asArray_return_the_number_of_node_in_the_list(){
+	int a=4,b=5,c=6;
+	void **array=(void**)malloc(sizeof(int*)*3);
+
+	LinkedList list = createList();
+	Node *node1 = create_node(&a);
+	Node *node2 = create_node(&b);
+	Node *node3 = create_node(&c);
+
+	add_to_list(&list,node1);
+	add_to_list(&list,node2);
+	add_to_list(&list,node3);
+
+	assertEqual(asArray(list,array), 3);
+	assert(array[0] == &a);
+	assert(array[1] == &b);
+	assert(array[2] == &c);
+
+	assertEqual(*(int*)array[2],6);
+	assertEqual(*(int*)array[1],5);
+	assertEqual(*(int*)array[0],4);
+
+}
+
+
+void test_asArray_does_not_populates_double_Array_and_returns_0_when_list_is_empty(){
+	double **array = (double**)malloc(sizeof(double*));
+	LinkedList list = createList();
+	assert(asArray(list, (void**)array) == 0);
+	free(array);
+}
+void test_asArray_does_not_populates_char_Array_and_returns_0_when_list_is_empty(){
+	char **array = (char**)malloc(sizeof(char*));
+	LinkedList list = createList();
+
+	assert(asArray(list, (void**)array) == 0);
+	free(array);
+}
+void test_asArray_populates_int_Array_with_char_Nodes_data_and_returns_number_of_elements_added_to_the_array(){
+	char a = 'x', b = 'y';
+	char **array = (char**)malloc(sizeof(char*)*2);
+	LinkedList list = createList();
+	Node *node1 = create_node(&a);
+	Node *node2 = create_node(&b);
+	add_to_list(&list,node1);
+	add_to_list(&list,node2);
+
+	assert(asArray(list, (void**)array) == 2);
+	assert(array[0] == &a);
+	assert(array[1] == &b);
+
+	assert(*(char*)(array[0]) == 'x');
+	assert(*(char*)(array[1]) == 'y');
+	free(array);
+}
+
+void test_asArray_does_not_populates_float_Array_and_returns_0_when_list_is_empty(){
+	float **array = (float**)malloc(sizeof(float*));
+	LinkedList list = createList();
+
+	assert(asArray(list, (void**)array) == 0);
+	free(array);
+};
+
+
+int isLessThan(void* data){
+	return ((*(int*)data) <= 5)? 1: 0;
+};
+
+void test_for_filter_gives_all_the_nodes_which_data_is_less_than_5_(){
+	int x=4,y=6,z=3;
+	LinkedList list = createList();
+	LinkedList* list_ptr;
+
+	Node* node1 = create_node(&x);
+	Node* node2 = create_node(&y);
+	Node* node3 = create_node(&z);
+
+	add_to_list(&list, node1);
+	add_to_list(&list, node2);
+	add_to_list(&list, node3);
+
+	list_ptr = filter(list,isLessThan);
+ 	assertEqual((*(int*)(list_ptr->head)->data),4);
+ 	assertEqual((list_ptr->count),2);
+ 	assertEqual((*(int*)(list_ptr->tail)->data),3);
+ 	
+};
+
+int find_small_charecter(void* data){
+	if((*(char*)data)>=97) 
+		return 1 ;
+	return 0;
+}
+
+void test_for_filter_gives_all_the_small_letter_in_the_list(){
+	char a='F',b='e',c='T',d='z',e='Y',f='f',g='s';
+	LinkedList list = createList();
+	LinkedList* list_ptr;
+
+	Node* node1 = create_node(&a);
+	Node* node2 = create_node(&b);
+	Node* node3 = create_node(&c);
+	Node* node4 = create_node(&d);
+	Node* node5 = create_node(&e);
+	Node* node6 = create_node(&f);
+	Node* node7 = create_node(&g);
+
+
+	add_to_list(&list, node1);
+	add_to_list(&list, node2);
+	add_to_list(&list, node3);
+	add_to_list(&list, node4);
+	add_to_list(&list, node5);
+	add_to_list(&list, node6);
+	add_to_list(&list, node7);
+
+	list_ptr = filter(list,find_small_charecter);
+ 	assertEqual((*(char*)(list_ptr->head)->data),'e');
+ 	assertEqual((list_ptr->count),4);
+ 	assertEqual((*(char*)(list_ptr->tail)->data),'s');
+ 	
 };
